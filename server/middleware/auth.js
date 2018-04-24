@@ -4,6 +4,8 @@ const pwdtoken = process.env.pwdtoken
 
 module.exports = {
   loginAuth: function(req, res, next){
+    console.log('Apa Masuk auth?')
+    
     if(req.headers.token){
       let token = req.headers.token
       jwt.verify(token, pwdtoken, function(err, decoded) {
@@ -57,6 +59,43 @@ module.exports = {
     }else{
       res.status(403).json({
         message: "U need to Login"
+      })
+    }
+  },
+  tokenCheck: function (req, res) {
+    if(req.headers.token){
+      let token = req.headers.token
+      jwt.verify(token, pwdtoken, function(err, decoded) {
+        if(err){
+          res.status(500).json({
+            message: 'token is invalid'
+          })
+        }else{
+          User.findOne({_id:decoded.id, email:decoded.email})
+            .then(users =>{
+              if(!users){
+                res.status(401).json({
+                 message: "Token invalid",
+                  states: false
+                }) 
+              }else{
+                res.status(200).json({
+                  message: "Token is valid",
+                  states: true,
+                  user: users
+                }) 
+              }
+            })
+            .catch(err => {
+              res.status(500).json({
+                message: err
+              })
+            })
+              }
+      });
+    }else{
+      res.status(403).json({
+        message: 'U need to Login'
       })
     }
   }

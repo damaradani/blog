@@ -5,6 +5,7 @@ const pwdtoken = process.env.pwdtoken
 module.exports = {
   showAllBlog: function(req, res){
     Blog.find()
+        .populate('user')
         .exec()
         .then(blog =>{
           res.status(200).json({
@@ -18,7 +19,25 @@ module.exports = {
             err
           })
         })
+  },
+  showBlogById: function(req, res){
+    let blog_id = req.params.id
 
+    Blog.findOne({_id:blog_id})
+        .populate('user')
+        .exec()
+        .then(blog =>{
+          res.status(200).json({
+            message: "Show Blog By Id",
+            data: blog
+          })
+        })
+        .catch(err => {
+          res.status(500).json({
+            message: "error",
+            err
+          })
+        })
   },
   getBlogByUserId: function(req, res){
     let token = req.headers.token
@@ -92,7 +111,8 @@ module.exports = {
 
   },
   deleteBlog: function(req, res){
-
+    console.log('Masuk Sini')
+    
     if(req.params.blog_id){
       let blog_id = req.params.blog_id
 
