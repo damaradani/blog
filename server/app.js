@@ -5,9 +5,15 @@ const mongoose = require('mongoose')
 
 const app = express()
 require('dotenv').config()
+let dbname = process.env.dbname
+let dbpwd = process.env.dbpwd
 
-//mongodb local
-mongoose.connect('mongodb://localhost/blog_db')
+// mongodb local for testing mocha chai
+// mongoose.connect('mongodb://localhost/blog_db')
+
+// mlab 
+mongoose.connect(`mongodb://${dbname}:${dbpwd}@ds147872.mlab.com:47872/blog_db`)
+
 
 app.use(cors())
 app.use(express.json())
